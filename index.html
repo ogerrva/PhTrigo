@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1e8449">
+    <title>PH do Trigo</title>
+    
+    <!-- Link para o Manifesto do App -->
+    <link rel="manifest" href="./manifest.json">
+
+    <style>
+        :root {
+            --primary: #1e8449;
+            --primary-hover: #176638;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-muted: #7f8c8d;
+            --border-radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            user-select: none; 
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; 
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .app-container {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 420px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .resultado-box {
+            padding: 15px;
+            background-color: #e8f8f5;
+            border-radius: 8px;
+            border: 1px solid #d1f2eb;
+            display: none; 
+            animation: fadeIn 0.3s ease;
+        }
+
+        .resultado-box p {
+            margin: 6px 0;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .resultado-box p span {
+            font-weight: bold;
+        }
+
+        .destaque-arredondado {
+            background-color: #d1f2eb;
+            padding: 6px 10px;
+            border-radius: 5px;
+            color: #117a65;
+            font-size: 0.9rem !important;
+            margin-top: 5px;
+        }
+
+        .divider {
+            height: 1px;
+            background-color: #b8e994;
+            margin: 10px 0;
+        }
+
+        .resultado-final {
+            font-size: 1.25rem !important;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .aviso-umidade {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+            text-align: center;
+            display: none;
+        }
+
+        .erro {
+            color: #e74c3c;
+            font-weight: 600;
+            text-align: center;
+            font-size: 0.9rem;
+            display: none;
+            background-color: #fadbd8;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .inputs-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+            text-align: center;
+        }
+
+        .fake-input {
+            width: 100%;
+            height: 50px;
+            border: 2px solid #dcdde1;
+            border-radius: 8px;
+            font-size: 1.3rem;
+            background-color: #fbfbfb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-main);
+            font-weight: bold;
+        }
+
+        .fake-input:empty::before {
+            content: attr(data-placeholder);
+            color: #b2bec3;
+            font-weight: normal;
+            font-size: 1rem;
+        }
+
+        .fake-input.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(30, 132, 73, 0.2);
+            background-color: #fff;
+        }
+
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .key {
+            background-color: #f1f2f6;
+            border: none;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: background-color 0.1s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 0 #dfe4ea;
+        }
+
+        .key:active {
+            background-color: #dfe4ea;
+            transform: translateY(2px);
+            box-shadow: 0 0 0 #dfe4ea;
+        }
+
+        .key-action {
+            background-color: #eccc68;
+            color: #2f3542;
+        }
+
+        .key-action:active {
+            background-color: #ffa502;
+        }
+
+        .btn-install {
+            width: 100%;
+            padding: 12px;
+            background-color: #f39c12;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: none; 
+            margin-top: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <h2>Calculadora de PH</h2>
+    </div>
+    
+    <div class="content">
+        <div id="msgErro" class="erro"></div>
+
+        <div id="resultadoBox" class="resultado-box">
+            <p>PH Base (Balança): <span id="resPhBase"></span></p>
+            <p>Melhoria (Umidade): <span id="resMelhoria"></span></p>
+            <p class="destaque-arredondado">
+                Arredondado: <span id="resCalculoArredondado"></span>
+            </p>
+            <div class="divider"></div>
+            <p class="resultado-final">PH EXATO: <span id="resPhFinal"></span></p>
+            <div id="avisoUmidade" class="aviso-umidade">* Umidade não preenchida.</div>
+        </div>
+
+        <div class="inputs-row">
+            <div class="form-group">
+                <label>Peso (g)</label>
+                <div id="peso" class="fake-input active" data-placeholder="Ex: 182" onclick="selecionarCampo('peso')"></div>
+            </div>
+            <div class="form-group">
+                <label>Umidade (%)</label>
+                <div id="umidade" class="fake-input" data-placeholder="Ex: 20.5" onclick="selecionarCampo('umidade')"></div>
+            </div>
+        </div>
+
+        <div class="keypad">
+            <button class="key" onclick="digitar('1')">1</button>
+            <button class="key" onclick="digitar('2')">2</button>
+            <button class="key" onclick="digitar('3')">3</button>
+            <button class="key" onclick="digitar('4')">4</button>
+            <button class="key" onclick="digitar('5')">5</button>
+            <button class="key" onclick="digitar('6')">6</button>
+            <button class="key" onclick="digitar('7')">7</button>
+            <button class="key" onclick="digitar('8')">8</button>
+            <button class="key" onclick="digitar('9')">9</button>
+            <button class="key key-action" onclick="digitar('.')">,</button>
+            <button class="key" onclick="digitar('0')">0</button>
+            <button class="key key-action" onclick="apagar()">⌫</button>
+        </div>
+
+        <button id="btnInstall" class="btn-install">Instalar Aplicativo</button>
+    </div>
+</div>
+
+<script>
+    // --- REGISTRAR SERVICE WORKER (Para o botão de instalar funcionar) ---
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js').then(registration => {
+                console.log('ServiceWorker registrado com sucesso:', registration.scope);
+            }).catch(error => {
+                console.log('Falha ao registrar o ServiceWorker:', error);
+            });
+        });
+    }
+
+    // --- INSTALAÇÃO PWA ---
+    let promptInstalacao;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        promptInstalacao = e;
+        document.getElementById('btnInstall').style.display = 'block';
+    });
+
+    document.getElementById('btnInstall').addEventListener('click', () => {
+        if (promptInstalacao) {
+            promptInstalacao.prompt();
+            promptInstalacao.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    document.getElementById('btnInstall').style.display = 'none';
+                }
+                promptInstalacao = null;
+            });
+        }
+    });
+
+    // --- LÓGICA DO TECLADO VIRTUAL ---
+    let campoAtual = 'peso';
+
+    function selecionarCampo(campo) {
+        document.getElementById('peso').classList.remove('active');
+        document.getElementById('umidade').classList.remove('active');
+        document.getElementById(campo).classList.add('active');
+        campoAtual = campo;
+    }
+
+    function digitar(valor) {
+        const elemento = document.getElementById(campoAtual);
+        let textoAtual = elemento.innerText;
+
+        if (valor === '.') {
+            if (textoAtual.includes('.')) return;
+            if (textoAtual === '') textoAtual = '0';
+        }
+
+        if (textoAtual.length < 5) {
+            elemento.innerText = textoAtual + valor;
+            calcularPH();
+        }
+    }
+
+    function apagar() {
+        const elemento = document.getElementById(campoAtual);
+        let textoAtual = elemento.innerText;
+        elemento.innerText = textoAtual.slice(0, -1);
+        calcularPH();
+    }
+
+    // --- LÓGICA DA CALCULADORA ---
+    const tabelaPeso = {
+        "160.0": 62.40, "160.5": 62.65, "161.0": 62.85, "161.5": 63.10, "162.0": 63.30, "162.5": 63.55, "163.0": 63.75, "163.5": 64.00, "164.0": 64.20, "164.5": 64.45,
+        "165.0": 64.65, "165.5": 64.90, "166.0": 65.10, "166.5": 65.35, "167.0": 65.55, "167.5": 65.80, "168.0": 66.00, "168.5": 66.25, "169.0": 66.45, "169.5": 66.70,
+        "170.0": 66.90, "170.5": 67.15, "171.0": 67.35, "171.5": 67.60, "172.0": 67.80, "172.5": 68.05, "173.0": 68.25, "173.5": 68.50, "174.0": 68.70, "174.5": 68.95,
+        "175.0": 69.15, "175.5": 69.40, "176.0": 69.60, "176.5": 69.85, "177.0": 70.05, "177.5": 70.30, "178.0": 70.50, "178.5": 70.75, "179.0": 70.95, "179.5": 71.20,
+        "180.0": 71.40, "180.5": 71.65, "181.0": 71.85, "181.5": 72.10, "182.0": 72.30, "182.5": 72.55, "183.0": 72.75, "183.5": 73.00, "184.0": 73.20, "184.5": 73.45,
+        "185.0": 73.65, "185.5": 73.90, "186.0": 74.10, "186.5": 74.35, "187.0": 74.55, "187.5": 74.80, "188.0": 75.00, "188.5": 75.25, "189.0": 75.45, "189.5": 75.70,
+        "190.0": 75.90, "190.5": 76.15, "191.0": 76.35, "191.5": 76.60, "192.0": 76.80, "192.5": 77.05, "193.0": 77.25, "193.5": 77.50, "194.0": 77.70, "194.5": 77.95,
+        "195.0": 78.15, "195.5": 78.40, "196.0": 78.60, "196.5": 78.85, "197.0": 79.05, "197.5": 79.30, "198.0": 79.50, "198.5": 79.75, "199.0": 79.95, "199.5": 80.20,
+        "200.0": 80.40, "200.5": 80.65, "201.0": 80.85, "201.5": 81.10, "202.0": 81.30, "202.5": 81.55, "203.0": 81.75, "203.5": 82.00, "204.0": 82.20, "204.5": 82.45,
+        "205.0": 82.65, "205.5": 82.90, "206.0": 83.10, "206.5": 83.35, "207.0": 83.55, "207.5": 83.80, "208.0": 84.00, "208.5": 84.25, "209.0": 84.45, "209.5": 84.70,
+        "210.0": 84.90
+    };
+
+    function calcularPH() {
+        const inputPesoRaw = document.getElementById('peso').innerText;
+        const inputUmidadeRaw = document.getElementById('umidade').innerText;
+        const divErro = document.getElementById('msgErro');
+        const divResultado = document.getElementById('resultadoBox');
+        const avisoUmidade = document.getElementById('avisoUmidade');
+
+        divErro.style.display = "none";
+        divResultado.style.display = "none";
+        avisoUmidade.style.display = "none";
+
+        if (inputPesoRaw.trim() === "") return;
+
+        const inputPeso = parseFloat(inputPesoRaw);
+        
+        if (inputPeso < 160.0 || inputPeso > 210.0) {
+            if(inputPesoRaw.length >= 3) {
+                divErro.innerHTML = "O peso deve estar entre 160.0 e 210.0 g.";
+                divErro.style.display = "block";
+            }
+            return;
+        }
+
+        let umidadeVazia = false;
+        let inputUmidade = 0;
+        
+        if (inputUmidadeRaw.trim() === "") {
+            umidadeVazia = true;
+        } else {
+            inputUmidade = parseFloat(inputUmidadeRaw);
+        }
+
+        let pesoAjustado = (Math.round(inputPeso * 2) / 2).toFixed(1);
+        let phBase = tabelaPeso[pesoAjustado];
+        
+        if (phBase === undefined) {
+            divErro.innerHTML = "Erro ao localizar o peso.";
+            divErro.style.display = "block";
+            return;
+        }
+
+        let phArredondado = Math.round(phBase);
+        let colunaAlvo = phArredondado;
+        if (colunaAlvo < 63) colunaAlvo = 63;
+        if (colunaAlvo > 78) colunaAlvo = 78;
+
+        let indiceColuna = colunaAlvo - 63;
+        let melhoria = 0;
+
+        if (!umidadeVazia) {
+            if (inputUmidade < 15.0) { melhoria = 0; } 
+            else if (inputUmidade < 16.0) { melhoria = [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1][indiceColuna]; } 
+            else if (inputUmidade < 17.0) { melhoria = [2,2,2,2,2,2,2,2,2,2,2,2,1,1,1,1][indiceColuna]; } 
+            else if (inputUmidade < 18.0) { melhoria = [2,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1][indiceColuna]; } 
+            else if (inputUmidade < 19.0) { melhoria = [3,3,3,3,3,3,3,3,3,3,3,2,2,1,1,1][indiceColuna]; } 
+            else if (inputUmidade < 20.0) { melhoria = [3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,1][indiceColuna]; } 
+            else if (inputUmidade < 21.0) { melhoria = [4,4,4,4,4,4,4,4,4,4,4,3,2,2,2,1][indiceColuna]; } 
+            else if (inputUmidade < 21.5) { melhoria = [4,4,4,4,4,4,4,4,4,4,4,4,3,2,2,1][indiceColuna]; } 
+            else if (inputUmidade < 23.0) { melhoria = [5,5,5,5,5,5,5,5,5,5,5,4,3,2,2,1][indiceColuna]; } 
+            else if (inputUmidade < 25.0) { melhoria = [6,6,6,6,6,6,6,5,5,5,5,4,3,2,2,1][indiceColuna]; } 
+            else {                          melhoria = [7,7,7,7,6,6,6,5,5,5,5,4,3,2,2,1][indiceColuna]; }
+        }
+
+        let phFinalArredondado = phArredondado + melhoria;
+        let phFinal = phBase + melhoria;
+
+        document.getElementById('resPhBase').innerText = phBase.toFixed(2);
+        document.getElementById('resMelhoria').innerText = "+" + melhoria;
+        document.getElementById('resCalculoArredondado').innerText = `${phArredondado} + ${melhoria} = ${phFinalArredondado}`;
+        document.getElementById('resPhFinal').innerText = phFinal.toFixed(2);
+        
+        if (umidadeVazia) {
+            avisoUmidade.style.display = "block";
+        }
+        
+        divResultado.style.display = "block";
+    }
+</script>
+
+</body>
+</html>

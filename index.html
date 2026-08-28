@@ -8,25 +8,24 @@
     <meta name="theme-color" content="#1e8449">
     <title>PH do Trigo</title>
     
-    <!-- Link para o Manifesto do App -->
+    <!-- Ícone do site e Link para o Manifesto -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231e8449'/%3E%3Cpath d='M50 85 V30 M50 70 C40 60 40 45 50 40 C60 45 60 60 50 70 M50 55 C40 45 40 30 50 25 C60 30 60 45 50 55 M50 40 C40 30 40 15 50 10 C60 15 60 30 50 40' stroke='white' stroke-width='4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
     <link rel="manifest" href="./manifest.json">
 
     <style>
         :root {
             --primary: #1e8449;
-            --primary-hover: #176638;
             --bg-color: #f0f2f5;
             --card-bg: #ffffff;
             --text-main: #2c3e50;
             --text-muted: #7f8c8d;
-            --border-radius: 12px;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             user-select: none; 
         }
 
@@ -44,7 +43,7 @@
             background-color: var(--card-bg);
             width: 100%;
             max-width: 420px;
-            border-radius: var(--border-radius);
+            border-radius: 12px;
             box-shadow: 0 8px 30px rgba(0,0,0,0.08);
             overflow: hidden;
             display: flex;
@@ -56,6 +55,10 @@
             color: white;
             padding: 15px;
             text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .header h2 {
@@ -70,23 +73,33 @@
             gap: 12px;
         }
 
+        /* CAIXA DE RESULTADO FIXA (Não pula tela) */
         .resultado-box {
+            height: 220px; /* ALTURA FIXA */
             padding: 15px;
             background-color: #e8f8f5;
             border-radius: 8px;
             border: 1px solid #d1f2eb;
-            display: none; 
-            animation: fadeIn 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
-        .resultado-box p {
+        .conteudo-resultado {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .conteudo-resultado p {
             margin: 6px 0;
             font-size: 0.95rem;
             display: flex;
             justify-content: space-between;
         }
 
-        .resultado-box p span {
+        .conteudo-resultado p span {
             font-weight: bold;
         }
 
@@ -111,24 +124,24 @@
             font-weight: 700;
         }
 
+        /* Reservando espaço para o texto não pular */
         .aviso-umidade {
             margin-top: 10px;
             font-size: 0.8rem;
             color: var(--text-muted);
             font-style: italic;
             text-align: center;
-            display: none;
+            visibility: hidden; 
+            height: 15px;
         }
 
-        .erro {
+        .erro-texto {
             color: #e74c3c;
             font-weight: 600;
             text-align: center;
-            font-size: 0.9rem;
+            font-size: 1rem;
             display: none;
-            background-color: #fadbd8;
-            padding: 12px;
-            border-radius: 8px;
+            width: 100%;
         }
 
         .inputs-row {
@@ -179,6 +192,7 @@
             background-color: #fff;
         }
 
+        /* TECLADO VIRTUAL */
         .keypad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -190,22 +204,21 @@
             background-color: #f1f2f6;
             border: none;
             border-radius: 8px;
-            padding: 15px;
+            height: 60px; /* Altura fixa para o botão */
             font-size: 1.5rem;
             font-weight: bold;
             color: var(--text-main);
             cursor: pointer;
-            transition: background-color 0.1s, transform 0.1s;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 0 #dfe4ea;
+            box-shadow: 0 3px 0 #dfe4ea;
         }
 
         .key:active {
             background-color: #dfe4ea;
-            transform: translateY(2px);
-            box-shadow: 0 0 0 #dfe4ea;
+            transform: translateY(3px);
+            box-shadow: none;
         }
 
         .key-action {
@@ -228,12 +241,7 @@
             font-weight: bold;
             cursor: pointer;
             display: none; 
-            margin-top: 10px;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -241,21 +249,32 @@
 
 <div class="app-container">
     <div class="header">
+        <!-- Ícone do Trigo no cabeçalho -->
+        <svg width="24" height="24" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50 85 V30 M50 70 C40 60 40 45 50 40 C60 45 60 60 50 70 M50 55 C40 45 40 30 50 25 C60 30 60 45 50 55 M50 40 C40 30 40 15 50 10 C60 15 60 30 50 40" stroke="white" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
         <h2>Calculadora de PH</h2>
     </div>
     
     <div class="content">
-        <div id="msgErro" class="erro"></div>
-
+        
+        <!-- CAIXA FIXA (Resultados ou Erro) -->
         <div id="resultadoBox" class="resultado-box">
-            <p>PH Base (Balança): <span id="resPhBase"></span></p>
-            <p>Melhoria (Umidade): <span id="resMelhoria"></span></p>
-            <p class="destaque-arredondado">
-                Arredondado: <span id="resCalculoArredondado"></span>
-            </p>
-            <div class="divider"></div>
-            <p class="resultado-final">PH EXATO: <span id="resPhFinal"></span></p>
-            <div id="avisoUmidade" class="aviso-umidade">* Umidade não preenchida.</div>
+            
+            <div id="msgErro" class="erro-texto">O peso deve estar entre 160.0 e 210.0 g.</div>
+            
+            <div id="conteudoResultado" class="conteudo-resultado">
+                <p>PH Base (Balança): <span id="resPhBase">--</span></p>
+                <p>Melhoria (Umidade): <span id="resMelhoria">--</span></p>
+                <p class="destaque-arredondado">
+                    Arredondado: <span id="resCalculoArredondado">--</span>
+                </p>
+                <div class="divider"></div>
+                <p class="resultado-final">PH EXATO: <span id="resPhFinal">--</span></p>
+                
+                <div id="avisoUmidade" class="aviso-umidade">* Umidade não preenchida.</div>
+            </div>
+
         </div>
 
         <div class="inputs-row">
@@ -269,6 +288,7 @@
             </div>
         </div>
 
+        <!-- Teclado Virtual (Fixo) -->
         <div class="keypad">
             <button class="key" onclick="digitar('1')">1</button>
             <button class="key" onclick="digitar('2')">2</button>
@@ -284,19 +304,15 @@
             <button class="key key-action" onclick="apagar()">⌫</button>
         </div>
 
-        <button id="btnInstall" class="btn-install">Instalar Aplicativo</button>
+        <button id="btnInstall" class="btn-install">Instalar App</button>
     </div>
 </div>
 
 <script>
-    // --- REGISTRAR SERVICE WORKER (Para o botão de instalar funcionar) ---
+    // --- SERVICE WORKER ---
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js').then(registration => {
-                console.log('ServiceWorker registrado com sucesso:', registration.scope);
-            }).catch(error => {
-                console.log('Falha ao registrar o ServiceWorker:', error);
-            });
+            navigator.serviceWorker.register('./sw.js');
         });
     }
 
@@ -326,8 +342,14 @@
     function selecionarCampo(campo) {
         document.getElementById('peso').classList.remove('active');
         document.getElementById('umidade').classList.remove('active');
-        document.getElementById(campo).classList.add('active');
+        
+        const elemento = document.getElementById(campo);
+        elemento.classList.add('active');
         campoAtual = campo;
+
+        // NOVIDADE: Ao clicar, zera o campo atual para digitação rápida!
+        elemento.innerText = '';
+        calcularPH();
     }
 
     function digitar(valor) {
@@ -352,7 +374,7 @@
         calcularPH();
     }
 
-    // --- LÓGICA DA CALCULADORA ---
+    // --- TABELA DE PESO E CÁLCULO ---
     const tabelaPeso = {
         "160.0": 62.40, "160.5": 62.65, "161.0": 62.85, "161.5": 63.10, "162.0": 63.30, "162.5": 63.55, "163.0": 63.75, "163.5": 64.00, "164.0": 64.20, "164.5": 64.45,
         "165.0": 64.65, "165.5": 64.90, "166.0": 65.10, "166.5": 65.35, "167.0": 65.55, "167.5": 65.80, "168.0": 66.00, "168.5": 66.25, "169.0": 66.45, "169.5": 66.70,
@@ -367,25 +389,43 @@
         "210.0": 84.90
     };
 
+    const divErro = document.getElementById('msgErro');
+    const divConteudo = document.getElementById('conteudoResultado');
+    const avisoUmidade = document.getElementById('avisoUmidade');
+
+    function resetarTela() {
+        document.getElementById('resPhBase').innerText = '--';
+        document.getElementById('resMelhoria').innerText = '--';
+        document.getElementById('resCalculoArredondado').innerText = '--';
+        document.getElementById('resPhFinal').innerText = '--';
+        
+        avisoUmidade.style.visibility = "hidden";
+        divErro.style.display = "none";
+        divConteudo.style.display = "flex";
+    }
+
+    function mostrarErro(mensagem) {
+        divConteudo.style.display = "none";
+        divErro.innerText = mensagem;
+        divErro.style.display = "block";
+    }
+
     function calcularPH() {
         const inputPesoRaw = document.getElementById('peso').innerText;
         const inputUmidadeRaw = document.getElementById('umidade').innerText;
-        const divErro = document.getElementById('msgErro');
-        const divResultado = document.getElementById('resultadoBox');
-        const avisoUmidade = document.getElementById('avisoUmidade');
 
-        divErro.style.display = "none";
-        divResultado.style.display = "none";
-        avisoUmidade.style.display = "none";
-
-        if (inputPesoRaw.trim() === "") return;
+        if (inputPesoRaw.trim() === "") {
+            resetarTela();
+            return;
+        }
 
         const inputPeso = parseFloat(inputPesoRaw);
         
         if (inputPeso < 160.0 || inputPeso > 210.0) {
             if(inputPesoRaw.length >= 3) {
-                divErro.innerHTML = "O peso deve estar entre 160.0 e 210.0 g.";
-                divErro.style.display = "block";
+                mostrarErro("O peso deve estar entre 160.0 e 210.0 g.");
+            } else {
+                resetarTela();
             }
             return;
         }
@@ -403,8 +443,7 @@
         let phBase = tabelaPeso[pesoAjustado];
         
         if (phBase === undefined) {
-            divErro.innerHTML = "Erro ao localizar o peso.";
-            divErro.style.display = "block";
+            mostrarErro("Erro ao localizar o peso na tabela.");
             return;
         }
 
@@ -433,16 +472,20 @@
         let phFinalArredondado = phArredondado + melhoria;
         let phFinal = phBase + melhoria;
 
+        // Atualizar Tela
+        divErro.style.display = "none";
+        divConteudo.style.display = "flex";
+
         document.getElementById('resPhBase').innerText = phBase.toFixed(2);
         document.getElementById('resMelhoria').innerText = "+" + melhoria;
         document.getElementById('resCalculoArredondado').innerText = `${phArredondado} + ${melhoria} = ${phFinalArredondado}`;
         document.getElementById('resPhFinal').innerText = phFinal.toFixed(2);
         
         if (umidadeVazia) {
-            avisoUmidade.style.display = "block";
+            avisoUmidade.style.visibility = "visible";
+        } else {
+            avisoUmidade.style.visibility = "hidden";
         }
-        
-        divResultado.style.display = "block";
     }
 </script>
 

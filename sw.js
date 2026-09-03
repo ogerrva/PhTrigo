@@ -1,4 +1,6 @@
-const CACHE_NAME = 'ph-trigo-v2';
+// ATENÇÃO: Toda vez que mudar o código, mude esse número (v3 para v4, v5...)
+const CACHE_NAME = 'ph-trigo-v3'; 
+
 const urlsToCache = [
   './',
   './index.html',
@@ -12,6 +14,26 @@ self.addEventListener('install', event => {
         return cache.addAll(urlsToCache);
       })
   );
+  // Força o Service Worker a instalar imediatamente
+  self.skipWaiting(); 
+});
+
+// AQUI ESTÁ A MÁGICA: Apaga o cache velho quando a versão muda
+self.addEventListener('activate', event => {
+  const cacheWhitelist = [CACHE_NAME];
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+  // Força o app a usar a versão nova imediatamente
+  self.clients.claim();
 });
 
 self.addEventListener('fetch', event => {

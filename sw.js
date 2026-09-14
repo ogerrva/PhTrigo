@@ -1,5 +1,5 @@
 // ATENÇÃO: Toda vez que mudar o código, mude esse número (v3 para v4, v5...)
-const CACHE_NAME = 'ph-trigo-v3'; 
+const CACHE_NAME = 'ph-trigo-v4'; 
 
 const urlsToCache = [
   './',

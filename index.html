@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#1e8449">
     <title>PH do Trigo</title>
     
-    <!-- Ícone do site e Link para o Manifesto -->
+    <!-- Ícone e Manifesto -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231e8449'/%3E%3Cpath d='M50 85 V30 M50 70 C40 60 40 45 50 40 C60 45 60 60 50 70 M50 55 C40 45 40 30 50 25 C60 30 60 45 50 55 M50 40 C40 30 40 15 50 10 C60 15 60 30 50 40' stroke='white' stroke-width='4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
     <link rel="manifest" href="./manifest.json">
 
@@ -73,13 +73,13 @@
             gap: 12px;
         }
 
-        /* CAIXA DE RESULTADO FIXA */
+        /* NOVA CAIXA DE RESULTADO FIXA */
         .resultado-box {
-            height: 220px; 
+            height: 250px; /* Aumentado para caber o novo design sem pular */
             padding: 15px;
-            background-color: #e8f8f5;
+            background-color: #ffffff;
             border-radius: 8px;
-            border: 1px solid #d1f2eb;
+            border: 1px solid #dcdde1;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -90,48 +90,93 @@
             width: 100%;
             display: flex;
             flex-direction: column;
-        }
-
-        .conteudo-resultado p {
-            margin: 6px 0;
-            font-size: 0.95rem;
-            display: flex;
+            height: 100%;
             justify-content: space-between;
         }
 
-        .conteudo-resultado p span {
-            font-weight: bold;
+        /* DESTAQUE DO PH ARREDONDADO */
+        .ph-arredondado-container {
+            text-align: center;
+            padding: 15px 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        .destaque-arredondado {
-            background-color: #d1f2eb;
-            padding: 6px 10px;
-            border-radius: 5px;
-            color: #117a65;
-            font-size: 0.9rem !important;
-            margin-top: 5px;
-        }
-
-        .divider {
-            height: 1px;
-            background-color: #b8e994;
-            margin: 10px 0;
-        }
-
-        .resultado-final {
-            font-size: 1.25rem !important;
-            color: var(--primary);
+        .ph-arredondado-container .label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
             font-weight: 700;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        .ph-arredondado-container .valor {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin: 5px 0;
+        }
+
+        .ph-arredondado-container .calculo {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        /* CORES DE TEMPERATURA */
+        .bg-default { background-color: #f1f2f6; color: #a4b0be; }
+        .bg-red { background-color: #e74c3c; color: white; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3); }
+        .bg-normal { background-color: #f39c12; color: white; box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3); } /* Neutro (72 a 78) Laranja/Amarelo */
+        .bg-green { background-color: #27ae60; color: white; box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3); }
+
+        /* BADGE TRIGUILHO */
+        .badge-triguilho {
+            background-color: #ffffff;
+            color: #c0392b;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-top: 8px;
+            display: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* DETALHES MENORES */
+        .detalhes-list {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #dcdde1;
+        }
+
+        .detalhes-list div {
+            text-align: center;
+        }
+        
+        .detalhes-list div span {
+            display: block;
+            font-weight: bold;
+            font-size: 1rem;
+            color: var(--primary);
         }
 
         .aviso-umidade {
-            margin-top: 10px;
-            font-size: 0.8rem;
+            margin-top: 5px;
+            font-size: 0.75rem;
             color: var(--text-muted);
             font-style: italic;
             text-align: center;
             visibility: hidden; 
-            height: 15px;
+            height: 12px;
         }
 
         .erro-texto {
@@ -143,6 +188,7 @@
             width: 100%;
         }
 
+        /* ENTRADA DE DADOS E TECLADO */
         .inputs-row {
             display: flex;
             gap: 15px;
@@ -191,7 +237,6 @@
             background-color: #fff;
         }
 
-        /* TECLADO VIRTUAL */
         .keypad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -260,13 +305,20 @@
             <div id="msgErro" class="erro-texto">O peso deve estar entre 160.0 e 210.0 g.</div>
             
             <div id="conteudoResultado" class="conteudo-resultado">
-                <p>PH Base (Balança): <span id="resPhBase">--</span></p>
-                <p>Melhoria (Umidade): <span id="resMelhoria">--</span></p>
-                <p class="destaque-arredondado">
-                    Arredondado: <span id="resCalculoArredondado">--</span>
-                </p>
-                <div class="divider"></div>
-                <p class="resultado-final">PH EXATO: <span id="resPhFinal">--</span></p>
+                
+                <!-- SUPER DESTAQUE DO PH ARREDONDADO -->
+                <div id="phDestContainer" class="ph-arredondado-container bg-default">
+                    <div class="label">PH Classificação</div>
+                    <div class="valor" id="resPhArredondadoDest">--</div>
+                    <div class="calculo" id="resCalculoExibicao">--</div>
+                    <div id="tagTriguilho" class="badge-triguilho">⚠️ Triguilho</div>
+                </div>
+
+                <div class="detalhes-list">
+                    <div>PH Base<span id="resPhBase">--</span></div>
+                    <div>Melhoria<span id="resMelhoria">--</span></div>
+                    <div>PH Exato<span id="resPhFinal">--</span></div>
+                </div>
                 
                 <div id="avisoUmidade" class="aviso-umidade">* Umidade não preenchida.</div>
             </div>
@@ -293,10 +345,7 @@
             <button class="key" onclick="digitar('7')">7</button>
             <button class="key" onclick="digitar('8')">8</button>
             <button class="key" onclick="digitar('9')">9</button>
-            
-            <!-- Botão modificado para "C" (Zerar Tudo) -->
             <button class="key key-action" onclick="zerarCalculadora()">C</button>
-            
             <button class="key" onclick="digitar('0')">0</button>
             <button class="key key-action" onclick="apagar()">⌫</button>
         </div>
@@ -306,34 +355,28 @@
 </div>
 
 <script>
-    // --- SERVICE WORKER ---
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('./sw.js');
         });
     }
 
-    // --- INSTALAÇÃO PWA ---
     let promptInstalacao;
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         promptInstalacao = e;
         document.getElementById('btnInstall').style.display = 'block';
     });
-
     document.getElementById('btnInstall').addEventListener('click', () => {
         if (promptInstalacao) {
             promptInstalacao.prompt();
             promptInstalacao.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    document.getElementById('btnInstall').style.display = 'none';
-                }
+                if (choiceResult.outcome === 'accepted') document.getElementById('btnInstall').style.display = 'none';
                 promptInstalacao = null;
             });
         }
     });
 
-    // --- LÓGICA DO TECLADO VIRTUAL E PONTUAÇÃO AUTOMÁTICA ---
     let campoAtual = 'peso';
 
     function selecionarCampo(campo) {
@@ -344,27 +387,22 @@
         elemento.classList.add('active');
         campoAtual = campo;
 
-        // Limpa o campo ao ser clicado para digitação rápida
         elemento.innerText = '';
         calcularPH();
     }
 
-    // Função auxiliar para injetar o ponto no lugar certo
     function formatarValor(raw, campo) {
         if (campo === 'peso' && raw.length === 4) {
-            return raw.slice(0, 3) + '.' + raw.slice(3); // 1915 -> 191.5
+            return raw.slice(0, 3) + '.' + raw.slice(3); 
         } else if (campo === 'umidade' && raw.length === 3) {
-            return raw.slice(0, 2) + '.' + raw.slice(2); // 206 -> 20.6
+            return raw.slice(0, 2) + '.' + raw.slice(2); 
         }
         return raw;
     }
 
     function digitar(valor) {
         const elemento = document.getElementById(campoAtual);
-        // Remove qualquer ponto que já exista para contar apenas os números "crus"
         let textoAtualRaw = elemento.innerText.replace('.', '');
-
-        // Limite: 4 dígitos para peso (ex: 1915), 3 para umidade (ex: 206)
         let maxDigits = (campoAtual === 'peso') ? 4 : 3;
 
         if (textoAtualRaw.length < maxDigits) {
@@ -385,14 +423,12 @@
         }
     }
 
-    // Zera tudo e volta o foco para o peso
     function zerarCalculadora() {
         document.getElementById('peso').innerText = '';
         document.getElementById('umidade').innerText = '';
         selecionarCampo('peso');
     }
 
-    // --- TABELA DE PESO E CÁLCULO ---
     const tabelaPeso = {
         "160.0": 62.40, "160.5": 62.65, "161.0": 62.85, "161.5": 63.10, "162.0": 63.30, "162.5": 63.55, "163.0": 63.75, "163.5": 64.00, "164.0": 64.20, "164.5": 64.45,
         "165.0": 64.65, "165.5": 64.90, "166.0": 65.10, "166.5": 65.35, "167.0": 65.55, "167.5": 65.80, "168.0": 66.00, "168.5": 66.25, "169.0": 66.45, "169.5": 66.70,
@@ -410,11 +446,21 @@
     const divErro = document.getElementById('msgErro');
     const divConteudo = document.getElementById('conteudoResultado');
     const avisoUmidade = document.getElementById('avisoUmidade');
+    
+    // Elementos Dinâmicos do Layout Novo
+    const phDestContainer = document.getElementById('phDestContainer');
+    const resPhArredondadoDest = document.getElementById('resPhArredondadoDest');
+    const resCalculoExibicao = document.getElementById('resCalculoExibicao');
+    const tagTriguilho = document.getElementById('tagTriguilho');
 
     function resetarTela() {
+        phDestContainer.className = 'ph-arredondado-container bg-default';
+        resPhArredondadoDest.innerText = '--';
+        resCalculoExibicao.innerText = '--';
+        tagTriguilho.style.display = 'none';
+
         document.getElementById('resPhBase').innerText = '--';
         document.getElementById('resMelhoria').innerText = '--';
-        document.getElementById('resCalculoArredondado').innerText = '--';
         document.getElementById('resPhFinal').innerText = '--';
         
         avisoUmidade.style.visibility = "hidden";
@@ -440,7 +486,6 @@
         const inputPeso = parseFloat(inputPesoRaw);
         
         if (inputPeso < 160.0 || inputPeso > 210.0) {
-            // Só exibe o erro se tiver 3 ou mais dígitos formatados/crus
             if(inputPesoRaw.replace('.', '').length >= 3) {
                 mostrarErro("O peso deve estar entre 160.0 e 210.0 g.");
             } else {
@@ -462,7 +507,7 @@
         let phBase = tabelaPeso[pesoAjustado];
         
         if (phBase === undefined) {
-            mostrarErro("Erro ao localizar o peso na tabela.");
+            mostrarErro("Erro ao localizar o peso.");
             return;
         }
 
@@ -491,13 +536,29 @@
         let phFinalArredondado = phArredondado + melhoria;
         let phFinal = phBase + melhoria;
 
-        // Atualizar Tela
         divErro.style.display = "none";
         divConteudo.style.display = "flex";
 
+        // LÓGICA DE CORES E TRIGUILHO
+        phDestContainer.classList.remove('bg-default', 'bg-red', 'bg-normal', 'bg-green');
+        
+        if (phFinalArredondado < 72) {
+            phDestContainer.classList.add('bg-red');
+            tagTriguilho.style.display = 'inline-block';
+        } else if (phFinalArredondado > 78) {
+            phDestContainer.classList.add('bg-green');
+            tagTriguilho.style.display = 'none';
+        } else {
+            phDestContainer.classList.add('bg-normal'); // De 72 até 78 fica Amarelo/Laranja (Médio)
+            tagTriguilho.style.display = 'none';
+        }
+
+        // PREENCHIMENTO DOS DADOS
+        resPhArredondadoDest.innerText = phFinalArredondado;
+        resCalculoExibicao.innerText = `${phArredondado} (Base) + ${melhoria} (Umidade)`;
+        
         document.getElementById('resPhBase').innerText = phBase.toFixed(2);
         document.getElementById('resMelhoria').innerText = "+" + melhoria;
-        document.getElementById('resCalculoArredondado').innerText = `${phArredondado} + ${melhoria} = ${phFinalArredondado}`;
         document.getElementById('resPhFinal').innerText = phFinal.toFixed(2);
         
         if (umidadeVazia) {

@@ -1,5 +1,5 @@
-// ATENÇÃO: Toda vez que mudar o código, mude esse número (v3 para v4, v5...)
-const CACHE_NAME = 'ph-trigo-v4'; 
+// VERSÃO ATUALIZADA - v5
+const CACHE_NAME = 'ph-trigo-v5'; 
 
 const urlsToCache = [
   './',
@@ -9,16 +9,13 @@ const urlsToCache = [
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        return cache.addAll(urlsToCache);
-      })
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll(urlsToCache);
+    })
   );
-  // Força o Service Worker a instalar imediatamente
   self.skipWaiting(); 
 });
 
-// AQUI ESTÁ A MÁGICA: Apaga o cache velho quando a versão muda
 self.addEventListener('activate', event => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
@@ -32,18 +29,34 @@ self.addEventListener('activate', event => {
       );
     })
   );
-  // Força o app a usar a versão nova imediatamente
   self.clients.claim();
 });
 
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        if (response) {
-          return response; 
+    caches.match(event.request).then(response => {
+      if (response) return response; 
+      return fetch(event.request);
+    })
+  );
+});
+
+// A MÁGICA DO ACESSO RÁPIDO: O que acontece ao tocar na notificação
+self.addEventListener('notificationclick', event => {
+  event.notification.close(); // Fecha a notificação clicada
+  
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
+      // Verifica se o app já está aberto em segundo plano e traz para a frente
+      for (let client of windowClients) {
+        if ('focus' in client) {
+          return client.focus();
         }
-        return fetch(event.request);
-      })
+      }
+      // Se estiver totalmente fechado, ele abre o app
+      if (clients.openWindow) {
+        return clients.openWindow('./');
+      }
+    })
   );
 });
